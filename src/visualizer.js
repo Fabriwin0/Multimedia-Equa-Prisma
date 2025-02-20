@@ -41,11 +41,11 @@ export class Visualizer {
   drawFrame(timestamp) {
     if (!this.frameTimer.shouldDrawFrame(timestamp)) return;
 
-    this.ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
+    this.ctx.fillStyle = 'rgba(0, 0, 0, 0.10)';
     this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
     
     const frequencies = analyzeFrequencyBands(this.frequencyData);
-    this.rotation += frequencies.mid * 0.0001;
+    this.rotation += frequencies.mid * -0.00040 + 0.01;
     
     this.drawPrism(frequencies);
   }
@@ -56,7 +56,7 @@ export class Visualizer {
 
   drawPrism({ bass, mid, treble }) {
     const size = Math.min(this.canvas.width, this.canvas.height) * 0.085;
-    const sides = 3;
+    const sides = 7;
     
     this.ctx.save();
     this.ctx.translate(this.centerX, this.centerY);
@@ -66,7 +66,7 @@ export class Visualizer {
     this.ctx.beginPath();
     for (let i = 0; i < sides; i++) {
       const angle = (i * 2 * Math.PI / sides) - Math.PI / 2;
-      const radius = size * (0.00445 + bass * 0.018);
+      const radius = size * (0.00789 + bass * 0.1234567);
       const x = Math.cos(angle) * radius;
       const y = Math.sin(angle) * radius;
       
@@ -80,15 +80,15 @@ export class Visualizer {
     
     // Create gradient with complementary and analogous colors
     const gradient = this.ctx.createLinearGradient(-size, -size, size, size);
-    gradient.addColorStop(0, `hsl(${bass * 0.5}, 85%, 45%)`);           // Vibrant base
-    gradient.addColorStop(0.3, `hsl(${mid + 30}, 70%, 55%)`);          // Analogous mid
-    gradient.addColorStop(0.6, `hsl(${treble + 60}, 75%, 40%)`);       // Complementary
-    gradient.addColorStop(1, `hsl(${(bass + 180) % 360}, 80%, 35%)`);  // Contrasting
+    gradient.addColorStop(0, `hsl(${bass * 0.4}, 85%, 45%)`);           // Vibrant base
+    gradient.addColorStop(0.3, `hsl(${mid + 600}, 70%, 55%)`);          // Analogous mid
+    gradient.addColorStop(0.6, `hsl(${treble + 200}, 75%, 40%)`);       // Complementary
+    gradient.addColorStop(0.9, `hsl(${(bass + 900) % 1000}, 75%, 35%)`);  // Contrasting
     this.ctx.strokeStyle = gradient;
-    this.ctx.lineWidth = 9;
+    this.ctx.lineWidth = 12;
     this.ctx.stroke();
     
-    this.drawInnerPatterns(size * 0.999, mid, treble);
+    this.drawInnerPatterns(size * 1, mid, treble);
     
     this.ctx.restore();
   }
@@ -99,7 +99,7 @@ export class Visualizer {
     
     for (let i = 0; i < triangles; i++) {
       const angle = i * angleStep;
-      const scale = 1 + (mid * 0.033);
+      const scale = 1 + (mid * 0.0205);
       
       this.ctx.save();
       this.ctx.rotate(angle);
@@ -110,21 +110,21 @@ export class Visualizer {
       this.ctx.closePath();
       
       const gradient = this.ctx.createLinearGradient(0, -size, 0, size);
-      gradient.addColorStop(0, `hsla(${(treble + 180) % 360}, 100%, 20%, 0.8)`);  // Opposite hue, dark
-      gradient.addColorStop(0.5, `hsla(${(mid + 270) % 360}, 90%, 15%, 0.6)`);    // Triadic, very dark
-      gradient.addColorStop(1, `hsla(${(treble + 90) % 360}, 95%, 25%, 0.7)`);    // Discordant, medium dark
+      gradient.addColorStop(0, `hsla(${(treble + 600) % 300}, 100%, 20%, 0.8)`);  // Opposite hue, dark
+      gradient.addColorStop(0.5, `hsla(${(mid + 200) % 300}, 90%, 15%, 0.6)`);    // Triadic, very dark
+      gradient.addColorStop(1, `hsla(${(treble + 900) % 900}, 95%, 25%, 0.7)`);    // Discordant, medium dark
       // Add pulsing glow effect
       // Add villain-inspired texture effect
-      const shimmerEffect = Math.sin(Date.now() * 0.002) * 0.2 + 0.8;
-      gradient.addColorStop(0.2, `hsla(38, 100%, 50%, ${shimmerEffect})`);  // Gold
-      gradient.addColorStop(0.7, `hsla(0, 0%, 0%, 0.9)`);                   // Black
-      gradient.addColorStop(0.9, `hsla(38, 90%, 40%, ${shimmerEffect})`);   // Dark gold
-      this.ctx.shadowBlur = 15 + Math.sin(Date.now() * 0.003) * 10;
-      this.ctx.shadowColor = `hsla(${treble}, 90%, 50%, 0.6)`;
+      const shimmerEffect = Math.sin(Date.now() * 0.009) * 0.8 + 20.8;
+      gradient.addColorStop(0.2, `hsla(90, 100%, 50%, ${shimmerEffect})`);  // verde
+      gradient.addColorStop(0.7, `hsla(253, 73.70%, 26.90%, 0.92)`);                   // Violeta
+      gradient.addColorStop(0.9, `hsla(80, 90%, 40%, ${shimmerEffect})`);   // verde
+      this.ctx.shadowBlur = 5 + Math.sin(Date.now() * 0.185) * 10;
+      this.ctx.shadowColor = `hsla(${treble}, 10%, 450%, 1.2)`;
 
       // Add subtle stroke for depth
-      this.ctx.strokeStyle = `hsla(${mid}, 80%, 40%, 0.4)`;
-      this.ctx.lineWidth = 2;
+      this.ctx.strokeStyle = `hsla(${mid}, 60%, 1%, 0.77)`;
+      this.ctx.lineWidth = 35;
       this.ctx.stroke();
       
 
